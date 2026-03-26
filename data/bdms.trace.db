@@ -1,0 +1,6 @@
+2026-03-12 16:01:14.137119+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]\feffINSERT INTO blood_group (name) VALUES ('A+')"; SQL statement:
+﻿INSERT INTO blood_group (name) VALUES ('A+') [42000-224]
+2026-03-12 16:02:18.488455+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "BLOOD_GROUP" not found (this database is empty); SQL statement:
+INSERT INTO blood_group (name) VALUES ('A+') [42104-224]

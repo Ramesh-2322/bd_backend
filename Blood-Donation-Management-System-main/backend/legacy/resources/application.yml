@@ -1,0 +1,32 @@
+﻿spring:
+  datasource:
+    url: jdbc:h2:file:./data/bdms;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: "CHANGE_ME_TO_A_LONG_RANDOM_SECRET_FOR_PROD"
+    expiration-ms: 86400000
+  upload-dir: "uploads"
+  cors:
+    allowed-origins: "http://localhost:5173"
