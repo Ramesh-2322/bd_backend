@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: bdms-backend
+    env: java
+    rootDir: Blood-Donation-Management-System-main/backend
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -Dserver.port=$PORT -jar target/*.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
