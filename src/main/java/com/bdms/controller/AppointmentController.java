@@ -60,7 +60,7 @@ public class AppointmentController {
     }
 
     @GetMapping
-        @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+                @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','HOSPITAL')")
     public ResponseEntity<ApiResponse<Page<AppointmentResponse>>> getAllAppointments(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -74,7 +74,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}/status")
-        @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+                @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','HOSPITAL')")
     public ResponseEntity<ApiResponse<AppointmentResponse>> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody AppointmentStatusUpdateRequest request

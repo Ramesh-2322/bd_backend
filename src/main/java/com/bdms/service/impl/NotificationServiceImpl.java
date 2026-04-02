@@ -3,6 +3,8 @@ package com.bdms.service.impl;
 import com.bdms.dto.appointment.AppointmentResponse;
 import com.bdms.dto.request.BloodRequestResponse;
 import com.bdms.dto.request.MatchedDonorResponse;
+import com.bdms.entity.Notification;
+import com.bdms.repository.NotificationRepository;
 import com.bdms.service.NotificationService;
 import com.bdms.service.RealtimeNotificationService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final JavaMailSender javaMailSender;
     private final RealtimeNotificationService realtimeNotificationService;
+    private final NotificationRepository notificationRepository;
 
     @Value("${notification.email.enabled:false}")
     private boolean emailEnabled;
@@ -39,6 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
         String body = "Your blood request for patient " + bloodRequest.getPatientName() + " has been approved.";
 
         sendEmail(adminRecipient, subject, body);
+        saveNotification(bloodRequest.getRequestedById(), "Request Approved", body, "REQUEST_APPROVED");
         realtimeNotificationService.publish("/topic/requests/approved", bloodRequest);
         log.info("Request approval notification triggered for requestId={}", bloodRequest.getId());
     }
@@ -49,12 +53,14 @@ public class NotificationServiceImpl implements NotificationService {
         log.info("Notification trigger for requestId={}, matchedDonorsCount={}", bloodRequest.getId(), matchedDonors.size());
 
         for (MatchedDonorResponse donor : matchedDonors) {
+            String donorMessage = "You have been matched for blood request #" + bloodRequest.getId() +
+                " at " + bloodRequest.getHospitalName() + ".";
             sendEmail(
                     donor.getEmail(),
                     "Urgent Blood Match Opportunity",
-                    "You have been matched for blood request #" + bloodRequest.getId() +
-                            " at " + bloodRequest.getHospitalName() + "."
+                donorMessage
             );
+            saveNotification(donor.getId(), "Urgent Blood Match", donorMessage, "MATCHED_DONOR");
             log.info("Matched donor notification simulated -> requestId={}, donorId={}, donorEmail={}, donorPhone={}",
                     bloodRequest.getId(), donor.getId(), donor.getEmail(), donor.getPhoneNumber());
         }
@@ -70,8 +76,23 @@ public class NotificationServiceImpl implements NotificationService {
                 " at " + appointment.getHospitalName() + " for patient " + appointment.getPatientName() + ".";
 
         sendEmail(adminRecipient, subject, body);
+        saveNotification(appointment.getDonorId(), "Appointment Booked", body, "APPOINTMENT_BOOKED");
         realtimeNotificationService.publish("/topic/appointments/booked", appointment);
         log.info("Appointment booked notification triggered for appointmentId={}", appointment.getId());
+    }
+
+    private void saveNotification(Long userId, String title, String message, String type) {
+        if (userId == null) {
+            return;
+        }
+
+        notificationRepository.save(Notification.builder()
+                .userId(userId)
+                .title(title)
+                .message(message)
+                .type(type)
+                .isRead(false)
+                .build());
     }
 
     private void sendEmail(String to, String subject, String body) {

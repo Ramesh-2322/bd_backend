@@ -113,8 +113,9 @@ public class AuthServiceImpl implements AuthService {
         return switch (role.toUpperCase()) {
             case "ROLE_SUPER_ADMIN", "SUPER_ADMIN" -> Role.ROLE_SUPER_ADMIN;
             case "ROLE_ADMIN", "ADMIN" -> Role.ROLE_ADMIN;
+            case "ROLE_HOSPITAL", "HOSPITAL" -> Role.ROLE_HOSPITAL;
             case "ROLE_DONOR", "ROLE_USER", "USER", "DONOR" -> Role.ROLE_DONOR;
-            default -> throw new BadRequestException("Invalid role. Use SUPER_ADMIN, ADMIN, or DONOR");
+            default -> throw new BadRequestException("Invalid role. Use SUPER_ADMIN, ADMIN, HOSPITAL, or DONOR");
         };
     }
 

@@ -48,7 +48,7 @@ public class BloodRequestController {
         }
 
     @GetMapping
-        @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','HOSPITAL')")
     public ResponseEntity<ApiResponse<Page<BloodRequestResponse>>> getAllRequests(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -77,7 +77,7 @@ public class BloodRequestController {
     }
 
     @PutMapping("/{id}/status")
-        @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN','HOSPITAL')")
     public ResponseEntity<ApiResponse<BloodRequestResponse>> updateRequestStatus(
             @PathVariable Long id,
             @Valid @RequestBody BloodRequestStatusUpdateRequest request
