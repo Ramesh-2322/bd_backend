@@ -1,0 +1,121 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: bdms-backend
+  cache:
+    type: simple
+    redis:
+      time-to-live: 10m
+      cache-null-values: false
+  data:
+    redis:
+      repositories:
+        enabled: false
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  datasource:
+    # Local default database: in-memory H2 to avoid requiring PostgreSQL for development.
+    url: ${DB_URL:jdbc:h2:mem:bdms;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:10MB}
+      max-request-size: ${MAX_REQUEST_SIZE:10MB}
+
+logging:
+  level:
+    root: INFO
+    com.bdms: DEBUG
+    org.springframework.security: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+
+jwt:
+  # Must be Base64-encoded and at least 256 bits for HS256
+  secret: ${JWT_SECRET:VGhpc0lzQVNlY3VyZUFuZExvbmdFbm91Z2hCYXNlNjRTZWNyZXRLZXk=}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+
+security:
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    requests-per-minute: ${RATE_LIMIT_RPM:120}
+    login-rpm: ${RATE_LIMIT_LOGIN_RPM:20}
+    request-create-rpm: ${RATE_LIMIT_REQUEST_CREATE_RPM:40}
+
+notification:
+  email:
+    enabled: ${NOTIFICATION_EMAIL_ENABLED:false}
+    from: ${NOTIFICATION_EMAIL_FROM:noreply@bdms.local}
+    admin-recipient: ${NOTIFICATION_EMAIL_ADMIN:admin@bdms.local}
+
+cleanup:
+  requests:
+    cron: ${REQUEST_CLEANUP_CRON:0 0 */6 * * *}
+    older-than-days: ${REQUEST_CLEANUP_OLDER_THAN_DAYS:14}
+
+storage:
+  medical-reports:
+    location: ${MEDICAL_REPORTS_PATH:uploads/medical-reports}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  cache:
+    type: redis
+  datasource:
+    # Supabase-compatible PostgreSQL configuration
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/bdms}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    root: INFO
+    com.bdms: INFO
+
+server:
+  forward-headers-strategy: framework
