@@ -3,3 +3,39 @@ node-backend/node_modules/
 
 # Java build output
 target/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+.nyc_output/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+!.vscode/settings.json
+
+# Env files
+.env
+node-backend/.env
+
+# Maven wrapper / tooling
+.mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ / Eclipse
+*.iml
+.project
+.classpath
+.settings/
